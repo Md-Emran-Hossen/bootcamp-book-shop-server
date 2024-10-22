@@ -14,7 +14,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 // const uri = "mongodb://localhost:27017/";
 
 const uri =
-`mongodb+srv://${process.env.DB_USER}:${process.env.DB_SECRET}@cluster0.ikm2v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_SECRET}@cluster0.ikm2v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -32,21 +32,38 @@ async function run() {
 
     const userCollection = client.db("newDb").collection("users");
     const userListCollection = client.db("usersDbBootcamp").collection("userList");
-    const categoryCollection = client.db("usersDbBootcamp").collection("categoryList");
+    const categoryCollection = client.db("newDb").collection("categories");
+    const bookCollection = client.db("newDb").collection("books");
     // const productCollection = client.db("usersDbBootcamp").collection("productList");
-   
-   // Category route
-   app.post("/categoryList", async (req, res) => {
-    const categories = req.body;
-    const result = await categoryCollection.insertOne(categories);
-    res.send(result);
-  });
 
-  app.get("/categoryList", async (req, res) => {
-    const query = categoryCollection.find();
-    const result = await query.toArray();
-    res.send(result);
-  });
+
+    // book route
+    app.post("/books", async (req, res) => {
+      const books = req.body;
+      const result = await bookCollection.insertOne(books);
+      res.send(result);
+    });
+
+    app.get("/books", async (req, res) => {
+      const query = bookCollection.find();
+      const result = await query.toArray();
+      res.send(result);
+    });
+
+
+    // Category route
+    app.post("/categories", async (req, res) => {
+      const categories = req.body;
+      const result = await categoryCollection.insertOne(categories);
+      console.log(result);
+      res.send(result);
+    });
+
+    app.get("/categories", async (req, res) => {
+      const query = categoryCollection.find();
+      const result = await query.toArray();
+      res.send(result);
+    });
 
     // // Products route
     // app.post("/productList", async (req, res) => {
@@ -63,9 +80,9 @@ async function run() {
     // });
 
 
-     // Users route
+    // Users route
 
-     app.get("/userList", async (req, res) => {
+    app.get("/userList", async (req, res) => {
       const query = userListCollection.find();
       const result = await query.toArray();
       res.send(result);
@@ -103,10 +120,10 @@ async function run() {
     // getting by firebase uid
     app.get("/user/:uid", async (req, res) => {
       const uid = req.params.uid;
-      const query = { userId : uid };
+      const query = { userId: uid };
       console.log(query);
       const result = await userCollection.findOne(query);
-     console.log(result);
+      console.log(result);
       res.send(result);
     });
 
