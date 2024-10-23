@@ -65,6 +65,44 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/category/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log("Deleted Value:=", id);
+      const query = { _id: new ObjectId(id) };
+      const result = await categoryCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    app.get("/category/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await categoryCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.put("/category/:id", async (req, res) => {
+      const categoryId = req.params.id;
+      console.log(categoryId);
+      const category = req.body;
+
+      const filter = { _id: new ObjectId(categoryId) };
+      const option = { upsert: true };
+
+      const updatedCategory = {
+        $set: {
+          categoryName: category.categoryName,
+          categoryDetails: category.categoryDetails,
+        },
+      };
+
+      const result = await categoryCollection.updateOne(
+        filter,
+        updatedCategory,
+        option
+      );
+      res.send(result);
+    });
+
     // // Products route
     // app.post("/productList", async (req, res) => {
     //   const products = req.body;
@@ -130,15 +168,16 @@ async function run() {
     app.put("/user/:id", async (req, res) => {
       const id = req.params.id;
       const user = req.body;
-      console.log(id, user);
 
       const filter = { _id: new ObjectId(id) };
       const option = { upsert: true };
 
       const updatedUser = {
         $set: {
-          name: user.name,
-          email: user.email,
+          displayName: user.displayName,
+          phone: user.phone,
+          photoUrl: user.photoUrl,
+          address: user.address,
         },
       };
 
