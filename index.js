@@ -40,6 +40,7 @@ async function run() {
     // book route
     app.post("/books", async (req, res) => {
       const books = req.body;
+      console.log("Book Details:=", books);
       const result = await bookCollection.insertOne(books);
       res.send(result);
     });
@@ -49,7 +50,43 @@ async function run() {
       const result = await query.toArray();
       res.send(result);
     });
+    
+    app.delete("/book/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await bookCollection.deleteOne(query);
+      res.send(result);
+    });
 
+    app.get("/book/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await bookCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.put("/book/:id", async (req, res) => {
+      const bookId = req.params.id;
+      const book = req.body;
+      const filter = { _id: new ObjectId(bookId) };
+      const option = { upsert: true };
+
+      const updatedBook = {
+        $set: {                    
+          bookName: book.bookName,
+          resalePrice: book.resalePrice,
+          description: book.description,
+          // status: book.status,
+        },
+      };
+
+      const result = await bookCollection.updateOne(
+        filter,
+        updatedBook,
+        option
+      );
+      res.send(result);
+    });
 
     // Category route
     app.post("/categories", async (req, res) => {
@@ -165,9 +202,18 @@ async function run() {
       res.send(result);
     });
 
+    // app.get("/user/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: new ObjectId(id) };
+    //   const result = await userCollection.findOne(query);
+    //   res.send(result);
+    // });
+
     app.put("/user/:id", async (req, res) => {
       const id = req.params.id;
       const user = req.body;
+
+      console.log("User Update Value:", user);
 
       const filter = { _id: new ObjectId(id) };
       const option = { upsert: true };
