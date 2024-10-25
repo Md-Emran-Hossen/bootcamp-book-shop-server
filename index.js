@@ -31,12 +31,9 @@ async function run() {
     await client.connect();
 
     const userCollection = client.db("newDb").collection("users");
-    const userListCollection = client.db("usersDbBootcamp").collection("userList");
     const categoryCollection = client.db("newDb").collection("categories");
     const bookCollection = client.db("newDb").collection("books");
-    // const productCollection = client.db("usersDbBootcamp").collection("productList");
-
-
+   
     // book route
     app.post("/books", async (req, res) => {
       const books = req.body;
@@ -50,7 +47,7 @@ async function run() {
       const result = await query.toArray();
       res.send(result);
     });
-    
+
     app.delete("/book/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -72,7 +69,7 @@ async function run() {
       const option = { upsert: true };
 
       const updatedBook = {
-        $set: {                    
+        $set: {
           bookName: book.bookName,
           resalePrice: book.resalePrice,
           description: book.description,
@@ -92,7 +89,7 @@ async function run() {
     app.post("/categories", async (req, res) => {
       const categories = req.body;
       const result = await categoryCollection.insertOne(categories);
-      console.log(result);
+      // console.log(result);
       res.send(result);
     });
 
@@ -119,7 +116,7 @@ async function run() {
 
     app.put("/category/:id", async (req, res) => {
       const categoryId = req.params.id;
-      console.log(categoryId);
+      // console.log(categoryId);
       const category = req.body;
 
       const filter = { _id: new ObjectId(categoryId) };
@@ -140,43 +137,14 @@ async function run() {
       res.send(result);
     });
 
-    // // Products route
-    // app.post("/productList", async (req, res) => {
-    //   const products = req.body;
-    //   // console.log(users);
-    //   const result = await productCollection.insertOne(products);
-    //   res.send(result);
-    // });
-
-    // app.get("/productList", async (req, res) => {
-    //   const query = productCollection.find();
-    //   const result = await query.toArray();
-    //   res.send(result);
-    // });
-
-
-    // Users route
-
-    app.get("/userList", async (req, res) => {
-      const query = userListCollection.find();
-      const result = await query.toArray();
+    // route for loading books categorybased
+    app.get("/categoryy/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { categoryId: id };
+      const result = await bookCollection.find(query).toArray();
+      console.log("Check HIT", result);
       res.send(result);
-    });
-    // // Getting by firebase uid
-    app.get("/userList/:uid", async (req, res) => {
-      const id = req.params.uid;
-      console.log(id);
-      const query = { userId: id };
-      const result = await userListCollection.findOne(query);
-      console.log(result);
-      res.send(result);
-    });
 
-    app.post("/userList", async (req, res) => {
-      const usersLst = req.body;
-      console.log(usersLst);
-      const result = await userListCollection.insertOne(usersLst);
-      res.send(result);
     });
 
     app.post("/users", async (req, res) => {
@@ -202,12 +170,12 @@ async function run() {
       res.send(result);
     });
 
-    // app.get("/user/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await userCollection.findOne(query);
-    //   res.send(result);
-    // });
+    app.get("/user/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.findOne(query);
+      res.send(result);
+    });
 
     app.put("/user/:id", async (req, res) => {
       const id = req.params.id;
