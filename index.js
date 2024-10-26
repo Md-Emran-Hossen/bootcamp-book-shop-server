@@ -73,7 +73,10 @@ async function run() {
           bookName: book.bookName,
           resalePrice: book.resalePrice,
           description: book.description,
-          // status: book.status,
+          author: book.author,
+          publisher: book.publisher,
+          rating: book.rating,
+          totalPages:book.totalPages,
         },
       };
 
@@ -190,7 +193,7 @@ async function run() {
         $set: {
           displayName: user.displayName,
           phone: user.phone,
-          photoUrl: user.photoUrl,
+          // photoUrl: user.photoUrl,
           address: user.address,
         },
       };
