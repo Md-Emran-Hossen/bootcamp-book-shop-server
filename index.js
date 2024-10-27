@@ -28,7 +28,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const userCollection = client.db("newDb").collection("users");
     const categoryCollection = client.db("newDb").collection("categories");
@@ -37,8 +37,8 @@ async function run() {
     // book route
     app.post("/books", async (req, res) => {
       const books = req.body;
-      console.log("Book Details:=", books);
       const result = await bookCollection.insertOne(books);
+      console.log("Book Insert Info: ", result);
       res.send(result);
     });
 
@@ -72,11 +72,11 @@ async function run() {
         $set: {
           bookName: book.bookName,
           resalePrice: book.resalePrice,
-          description: book.description,
           author: book.author,
           publisher: book.publisher,
           rating: book.rating,
           totalPages:book.totalPages,
+          review: book.review
         },
       };
 
@@ -92,7 +92,6 @@ async function run() {
     app.post("/categories", async (req, res) => {
       const categories = req.body;
       const result = await categoryCollection.insertOne(categories);
-      // console.log(result);
       res.send(result);
     });
 
@@ -104,7 +103,6 @@ async function run() {
 
     app.delete("/category/:id", async (req, res) => {
       const id = req.params.id;
-      console.log("Deleted Value:=", id);
       const query = { _id: new ObjectId(id) };
       const result = await categoryCollection.deleteOne(query);
       res.send(result);
@@ -119,7 +117,6 @@ async function run() {
 
     app.put("/category/:id", async (req, res) => {
       const categoryId = req.params.id;
-      // console.log(categoryId);
       const category = req.body;
 
       const filter = { _id: new ObjectId(categoryId) };
@@ -145,14 +142,12 @@ async function run() {
       const id = req.params.id;
       const query = { categoryId: id };
       const result = await bookCollection.find(query).toArray();
-      console.log("Check HIT", result);
       res.send(result);
 
     });
 
     app.post("/users", async (req, res) => {
       const users = req.body;
-      console.log(users);
       const result = await userCollection.insertOne(users);
       res.send(result);
     });
@@ -167,9 +162,7 @@ async function run() {
     app.get("/user/:uid", async (req, res) => {
       const uid = req.params.uid;
       const query = { userId: uid };
-      console.log(query);
       const result = await userCollection.findOne(query);
-      console.log(result);
       res.send(result);
     });
 
@@ -183,8 +176,6 @@ async function run() {
     app.put("/user/:id", async (req, res) => {
       const id = req.params.id;
       const user = req.body;
-
-      console.log("User Update Value:", user);
 
       const filter = { _id: new ObjectId(id) };
       const option = { upsert: true };
@@ -215,10 +206,10 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     //await client.close();
